@@ -15,3 +15,4 @@ webhook_system-*.gem
 
 # so rubocop-challenger does not complain about uncommited files
 .bundle/*
+.idea

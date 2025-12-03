@@ -1,0 +1,18 @@
+name: Brakeman
+on: [pull_request]
+jobs:
+  brakeman:
+    runs-on: ubuntu-latest
+    env:
+      BUNDLE_ENTERPRISE__CONTRIBSYS__COM: ${{secrets.BUNDLE_ENTERPRISE__CONTRIBSYS__COM}}
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v6
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@8aeb6ff8030dd539317f8e1769a044873b56ea71 # v1.268.0
+        with:
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+      - name: brakeman
+        uses: reviewdog/action-brakeman@5083efd49634e26645a0736681b618ccc3fb7f14 # v2.19.2
+        with:
+          reporter: github-pr-check # Default is github-pr-check

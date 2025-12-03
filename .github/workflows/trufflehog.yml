@@ -1,0 +1,13 @@
+name: TruffleHog Scan
+on: [push, pull_request]
+jobs:
+  trufflehog:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{env.branch}}
+          fetch-depth: ${{env.depth}}
+      - uses: trufflesecurity/trufflehog@v3.91.0
+        with:
+          extra_args: --results=verified,unknown

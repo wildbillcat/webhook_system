@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require 'active_support/all'
-require 'active_record'
-require 'active_job'
-require 'ph_model'
-require 'validate_url'
-require 'faraday'
-require 'faraday-encoding'
+require "active_support/all"
+require "active_record"
+require "active_job"
+require "ph_model"
+require "validate_url"
+require "faraday"
+require "faraday-encoding"
 
 module WebhookSystem
   extend ActiveSupport::Autoload

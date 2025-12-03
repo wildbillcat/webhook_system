@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
 module WebhookSystem
-
   # This is the ActiveJob in charge of actually sending each event
   class Job < ActiveJob::Base
-
     # Exception class around non 200 responses
     class RequestFailed < RuntimeError
       def initialize(message, code, error_message = nil)
@@ -39,7 +37,7 @@ module WebhookSystem
       elsif (match_data = subscription.url.match(/^inline:(.*)/)).present?
         self.class.call_inline(match_data[1], subscription, event)
       else
-        raise RuntimeError, "unknown prefix url for subscription"
+        raise "unknown prefix url for subscription"
         ensure_success(ErrorResponse.new(exception), :INVALID, subscription)
       end
     end
@@ -80,7 +78,6 @@ module WebhookSystem
       end
       text = "#{http_method} request to #{url} #{inner} code: #{status} and error #{response.body}"
       raise RequestFailed.new(text, status, response.body)
-
     end
 
     def self.build_request(client, subscription, event)
@@ -93,7 +90,7 @@ module WebhookSystem
     end
 
     def self.format_for_subscription(subscription)
-      subscription.encrypted ? 'base64+aes256' : 'json'
+      subscription.encrypted ? "base64+aes256" : "json"
     end
 
     def self.log_response(subscription, event, request, response)
@@ -114,7 +111,7 @@ module WebhookSystem
 
     def self.build_client
       Faraday.new do |faraday|
-        faraday.response :logger if ENV['WEBHOOK_DEBUG']
+        faraday.response :logger if ENV["WEBHOOK_DEBUG"]
         # use Faraday::Encoding middleware
         faraday.response :encoding
         faraday.adapter Faraday.default_adapter

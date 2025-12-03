@@ -1,25 +1,24 @@
 # frozen_string_literal: true
 
 module WebhookSystem
-
   # This is the model encompassing the actual record of a webhook subscription
   class Subscription < ActiveRecord::Base
-    self.table_name = 'webhook_subscriptions'
+    self.table_name = "webhook_subscriptions"
 
     belongs_to :account if defined?(Account)
 
-    INLINE_JOB_REGEXP = /^inline:(.*)/.freeze
-    validates :url, presence: true, url: { no_local: true }, if: proc { |a| !a.url.match?(INLINE_JOB_REGEXP) }
+    INLINE_JOB_REGEXP = /^inline:(.*)/
+    validates :url, presence: true, url: {no_local: true}, if: proc { |a| !a.url.match?(INLINE_JOB_REGEXP) }
     validates :secret, presence: true
 
-    has_many :topics, class_name: 'WebhookSystem::SubscriptionTopic', dependent: :destroy
-    has_many :event_logs, class_name: 'WebhookSystem::EventLog', dependent: :delete_all
+    has_many :topics, class_name: "WebhookSystem::SubscriptionTopic", dependent: :destroy
+    has_many :event_logs, class_name: "WebhookSystem::EventLog", dependent: :delete_all
 
     accepts_nested_attributes_for :topics, allow_destroy: true
 
     scope :active, -> { where(active: true) }
     scope :for_topic, ->(topic) {
-      joins(:topics).where(WebhookSystem::SubscriptionTopic.table_name => { name: topic })
+      joins(:topics).where(WebhookSystem::SubscriptionTopic.table_name => {name: topic})
     }
 
     scope :interested_in_topic, ->(topic) { active.for_topic(topic) }
@@ -57,11 +56,11 @@ module WebhookSystem
         {
           id: topic.id,
           name: topic.name,
-          _destroy: new_topics.exclude?(topic.name),
+          _destroy: new_topics.exclude?(topic.name)
         }
       end
 
-      new_topics_attributes += add_topics.map { |topic| { name: topic } }
+      new_topics_attributes += add_topics.map { |topic| {name: topic} }
 
       self.topics_attributes = new_topics_attributes
     end

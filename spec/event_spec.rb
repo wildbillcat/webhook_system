@@ -1,16 +1,17 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
+require "spec_helper"
 
 describe WebhookSystem, aggregate_failures: true do
   let(:widget_class) do
     Class.new do
       include PhModel
+
       attribute :foo
       attribute :bar
 
       def as_json
-        { foo: foo, bar: bar }
+        {foo: foo, bar: bar}
       end
     end
   end
@@ -27,7 +28,7 @@ describe WebhookSystem, aggregate_failures: true do
     local_test_payload_attributes = test_payload_attributes
     Class.new(WebhookSystem::BaseEvent) do
       def event_name
-        'sample_event'
+        "sample_event"
       end
 
       define_method(:payload_attributes) do
@@ -47,25 +48,25 @@ describe WebhookSystem, aggregate_failures: true do
   end
 
   before do
-    stub_const('Widget', widget_class)
-    stub_const('SampleEvent', event_class)
+    stub_const("Widget", widget_class)
+    stub_const("SampleEvent", event_class)
   end
 
-  describe 'Base Event' do
-    let(:widget) { widget_class.build(foo: 'Yay', bar: 'Bla') }
-    let(:event) { event_class.build widget: widget, name: 'Bob' }
+  describe "Base Event" do
+    let(:widget) { widget_class.build(foo: "Yay", bar: "Bla") }
+    let(:event) { event_class.build widget: widget, name: "Bob" }
 
-    context 'with array attribute list' do
-      describe '#as_json' do
+    context "with array attribute list" do
+      describe "#as_json" do
         let(:expected) do
           {
-            'event_name' => 'sample_event',
-            'event_id' => event.event_id,
-            'widget' => {
-              'foo' => 'Yay',
-              'bar' => 'Bla',
+            "event_name" => "sample_event",
+            "event_id" => event.event_id,
+            "widget" => {
+              "foo" => "Yay",
+              "bar" => "Bla"
             },
-            'name' => 'Bob',
+            "name" => "Bob"
           }
         end
 
@@ -75,24 +76,24 @@ describe WebhookSystem, aggregate_failures: true do
       end
     end
 
-    context 'with hash attribute list' do
-      describe '#as_json' do
+    context "with hash attribute list" do
+      describe "#as_json" do
         let(:expected) do
           {
-            'event_name' => 'sample_event',
-            'event_id' => event.event_id,
-            'the_widget' => {
-              'foo' => 'Yay',
-              'bar' => 'Bla',
+            "event_name" => "sample_event",
+            "event_id" => event.event_id,
+            "the_widget" => {
+              "foo" => "Yay",
+              "bar" => "Bla"
             },
-            'name' => 'The Bob',
+            "name" => "The Bob"
           }
         end
 
         let(:test_payload_attributes) do
           {
             the_widget: :widget,
-            name: :the_name,
+            name: :the_name
           }
         end
 
@@ -102,29 +103,29 @@ describe WebhookSystem, aggregate_failures: true do
       end
     end
 
-    context 'defining a reserved attribute' do
-      describe '#as_json' do
+    context "defining a reserved attribute" do
+      describe "#as_json" do
         let(:test_payload_attributes) do
           {
-            event: :name,
+            event: :name
           }
         end
 
         example do
           expect {
             event.as_json
-          }.to raise_exception(ArgumentError, 'SampleEvent should not be defining an attribute named event since its reserved')
+          }.to raise_exception(ArgumentError, "SampleEvent should not be defining an attribute named event since its reserved")
         end
       end
     end
 
-    describe '#event_name' do
-      example { expect(event.event_name).to eq('sample_event') }
+    describe "#event_name" do
+      example { expect(event.event_name).to eq("sample_event") }
     end
 
-    describe 'event_id' do
-      let(:event1) { event_class.build widget: widget, name: 'Bob' }
-      let(:event2) { event_class.build widget: widget, name: 'Bob2' }
+    describe "event_id" do
+      let(:event1) { event_class.build widget: widget, name: "Bob" }
+      let(:event2) { event_class.build widget: widget, name: "Bob2" }
       let(:guid_regex) { /\A[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\z/ }
 
       example do

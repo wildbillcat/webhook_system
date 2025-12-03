@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module WebhookSystem
-
   # This is the class meant to be used as the base class for any Events sent through the Webhook system
   class BaseEvent
     include PhModel
@@ -29,8 +28,8 @@ module WebhookSystem
 
     def as_json
       result = {
-        'event_name' => event_name,
-        'event_id' => event_id,
+        "event_name" => event_name,
+        "event_id" => event_id
       }
       each_attribute do |attribute_name, attribute_method|
         validate_attribute_name attribute_name
@@ -61,7 +60,6 @@ module WebhookSystem
 
       message = "#{self.class.name} should not be defining an attribute named #{key} since its reserved"
       raise ArgumentError, message
-
     end
 
     def each_attribute(&block)
